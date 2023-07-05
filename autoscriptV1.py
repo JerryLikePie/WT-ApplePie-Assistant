@@ -254,14 +254,6 @@ def WTScript(window):
                     time.sleep(1)
                 time.sleep(15)
                 break
-            if hasImage("respawn", 0.95, None):
-                # died but has enough points for a respawn
-                log("已死亡，但有分数")
-                getScreen(window, PATH)
-                time.sleep(0.5)
-                click(getButtonLocation("respawn"))
-                time.sleep(2)
-                maneuverPattern()
         # game is over
         log("结束战斗，等待结算")
         # wait for the points
