@@ -190,6 +190,16 @@ def WTScript(window):
                 while window.title.__contains__("等"):
                     time.sleep(1)
                 log("已进入海战！")
+        elif hasImage("researchdone", 0.85, None):
+            timeoutEscape()
+        elif hasImage("newshipresearched", 0.9, None):
+            escapeBuying(window)
+        elif hasImage("cancelsmall", 0.9, None):
+            click(getButtonLocation("cancelsmall"))
+        elif hasImage("exitout", 0.9, None):
+            click(getButtonLocation("exitout"))
+        else:
+            timeoutEscape()
     elif windowName.__contains__("试"):
         # We are in testing mode. Under this mode it only fires to check if the attack pattern works
         attackPattern()
@@ -226,7 +236,7 @@ def WTScript(window):
                 timeoutEscape()
                 getScreen(window, PATH)
                 time.sleep(1)
-            if hasImage("creates", 0.92, None):
+            if hasImage("creates", 0.85, None):
                 # unlocked crates
                 log("出了个箱子，记得查看背包")
                 getScreen(window, PATH)
