@@ -146,7 +146,7 @@ def attackPattern():
 
 def saveResults(window, times):
     # Save the results after a battle is done
-    log("保存收益截图，最多保存" + str(times) + "张，请按需清理")
+    log("Result Screenshot saved in log, cap at " + str(times) + ", delete if needed")
     i = 0
     while i < times:
         temppath = './battlelog/result' + str(i) + '.png'
