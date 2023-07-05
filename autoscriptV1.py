@@ -11,21 +11,20 @@ import PySimpleGUI as sg
 
 PATH = "./pic/screenshot.png"
 f = open('./battlelog/log.txt', 'a+')
-menu = "WT-Applepie-Auto (minimal version)：\n" \
-       "▶Main para：\nUI Scale: 100%\n" \
-       "▶Graphics：\nResolution：1270x720  Mode：Window\n" \
-       "▶Naval Battle Settings：\nDefault Target：All Target  Auto targetlock：On\n" \
-       "▶Controls->Naval：\n" \
-       "Target Tracking：=\nManual Aim Correction: ；\nHalt：X\n" \
-       "Zoom Axis: Increase Value：\\\nZoom Axis: Relative Control：On\nZoom Axis：Sensitivity：100%，Step：50%，Multiplier：2"
+menu = "战争雷霆苹果派助手简约（无高级功能）版：\n" \
+       "▶图像设定：\n分辨率：1270x720  显示模式：窗口模式\n" \
+       "▶主要参数->海战设置：\nAI攻击模式：任意目标  自动锁定目标：开\n" \
+       "▶按键设置->海战：\n" \
+       "目标跟踪（海战）：=\n手动瞄准修正：；\n停车：X\n" \
+       "缩放轴：增加数值：\\\n缩放轴：相对轴量控制：开\n缩放轴：灵敏度：100%，步长：50%，乘数：2"
 
 sg.theme('Reddit')
 
 updateLog = [
-    [sg.Text("Disclaimer：\nThis is a work of a class project,\nregarding OpenCV and image regon.\nDo not use it to farm SL.\nUse at your own risk", key="-log-")]]
+    [sg.Text("免责申明：\n本软件是大学暑期图像识别基础课课上实践作业，\n没有用到高深技术，现结课后根据规定免费公开，\n请勿在技术学习范畴之外使用或售卖本软件，\n违者后果自负", key="-log-")]]
 
 layout = [[sg.Text(menu)],
-          [sg.Button("Run Script"), sg.VSeperator(), sg.Button("Stop and Exit")],
+          [sg.Button("运行"), sg.VSeperator(), sg.Button("停止并退出")],
           [sg.Column(layout=updateLog, size=(300, 100))]]
 
 
@@ -44,7 +43,10 @@ def log(message):
     text = window["-log-"]
     text.update(message)
     curr_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    f.write("[" + curr_time + "] " + message + "\n")
+    try:
+        f.write("[" + curr_time + "] " + message + "\n")
+    except:
+        print("出现了日志写入错误，可能是计算机之间不同编码的问题吧？")
 
 
 def hasImage(name, threshold, message):
@@ -146,7 +148,7 @@ def attackPattern():
 
 def saveResults(window, times):
     # Save the results after a battle is done
-    log("Result Screenshot saved in log, cap at " + str(times) + ", delete if needed")
+    log("保存收益截图，最多保存" + str(times) + "张，请按需清理")
     i = 0
     while i < times:
         temppath = './battlelog/result' + str(i) + '.png'
@@ -175,9 +177,9 @@ def WTScript(window):
     getScreen(window, PATH)
     windowName = window.title
     print(windowName)
-    if not (windowName.__contains__("Test") or windowName.__contains__("In battle") or windowName.__contains__("Loading")):
+    if not (windowName.__contains__("试") or windowName.__contains__("战") or windowName.__contains__("载")):
         # We are at the hanger. Have to enter a game first
-        if hasImage("naval", 0.91, "Not detecting naval battles"):
+        if hasImage("naval", 0.91, "未检测到海战！请调成海战模式！"):
             if hasImage("enterbattle", 0.95, None):
                 click(getButtonLocation("enterbattle"))
                 time.sleep(5)
@@ -185,34 +187,34 @@ def WTScript(window):
                 if hasImage("downloadprompt", 0.95, None):
                     # If the texture download happens to be there, close it
                     click(getButtonLocation("downloadprompt"))
-                while window.title.__contains__("Waiting"):
+                while window.title.__contains__("等"):
                     time.sleep(1)
-                log("Entered a match！")
-    elif windowName.__contains__("Test"):
+                log("已进入海战！")
+    elif windowName.__contains__("试"):
         # We are in testing mode. Under this mode it only fires to check if the attack pattern works
         attackPattern()
-    elif windowName.__contains__("Loading"):
+    elif windowName.__contains__("载"):
         # We are loading into one game
         time.sleep(4)
-    elif windowName.__contains__("In battle"):
+    elif windowName.__contains__("战"):
         # We are currently in a game
         # First sleep for a while
         time.sleep(25)
         getScreen(window, PATH)
         time.sleep(1)
         # Then, let it auto spawn to avoid being locked on
-        while hasImage("spawn", 0.9, "Waiting……"):
+        while hasImage("spawn", 0.9, "等待中……"):
             getScreen(window, PATH)
             time.sleep(2)
-        log("Spawned")
+        log("加入战斗")
         time.sleep(5)
-        log("Turning")
+        log("开始机动")
         # After getting closer to the battlefield, start maneuvering
         maneuverPattern()
-        log("Firing")
+        log("开火")
         i = 0
         # Lock on to the enemy and open fire
-        while windowName.__contains__("In battle"):
+        while windowName.__contains__("战"):
             i = i + 1
             windowName = window.title
             attackPattern()
@@ -220,20 +222,20 @@ def WTScript(window):
             time.sleep(1)
             if i > 750:
                 # Game is stuck, try to escape
-                log("Game stuck")
+                log("检测到卡死")
                 timeoutEscape()
                 getScreen(window, PATH)
                 time.sleep(1)
             if hasImage("creates", 0.92, None):
                 # unlocked crates
-                log("Crate, check inventory")
+                log("出了个箱子，记得查看背包")
                 getScreen(window, PATH)
                 time.sleep(15)
                 pressWithDelay('esc', 0.1, 0.5)
                 break
             if hasImage("youdied", 0.95, None):
                 # died before the game ended
-                log("Died and returning to hanger")
+                log("已死亡，返回主界面中，为防止网络情况卡死，等待15秒")
                 getScreen(window, PATH)
                 time.sleep(1)
                 while hasImage("youdied", 0.94, None):
@@ -244,14 +246,14 @@ def WTScript(window):
                 break
             if hasImage("respawn", 0.95, None):
                 # died but has enough points for a respawn
-                log("Died but have enough points")
+                log("已死亡，但有分数")
                 getScreen(window, PATH)
                 time.sleep(0.5)
                 click(getButtonLocation("respawn"))
                 time.sleep(2)
                 maneuverPattern()
         # game is over
-        log("Battle is over, waiting for updates")
+        log("结束战斗，等待结算")
         # wait for the points
         time.sleep(20)
         getScreen(window, PATH)
@@ -261,7 +263,7 @@ def WTScript(window):
         while not hasImage("gotobase", 0.92, None):
             i = i + 1
             if i > 30:
-                log("Game Stuck")
+                log("检测到卡死")
                 timeoutEscape()
                 break
             time.sleep(1)
@@ -270,8 +272,8 @@ def WTScript(window):
             if hasImage("researchdone", 0.91, None):
                 # new ship got researched. To avoid spending all SL, we glitch the research out
                 researchDone = True
-                log("New ship researched")
-                log("If you are buying then stop the script")
+                log("解锁了配件或新船，将卡掉研发")
+                log("如果需要购买或研发特定船只请暂停脚本")
                 saveResults(window, 150)
                 escapeBuying(window)
                 break
@@ -281,7 +283,7 @@ def WTScript(window):
             saveResults(window, 150)
             getScreen(window, PATH)
             time.sleep(1)
-            log("Returning to hanger")
+            log("结算完成，返回主界面")
             click(getButtonLocation("gotobase"))
         time.sleep(5)
         getScreen(window, PATH)
@@ -308,7 +310,7 @@ def detectWindow():
                 time.sleep(0.5)
             else:
                 "Currently not in War Thunder"
-                log("War Thunder Not Detected")
+                log("未检测到战争雷霆！")
                 time.sleep(3)
 
         except KeyboardInterrupt:
@@ -322,16 +324,16 @@ def startScript():
 
 if __name__ == '__main__':
     isRunning = False
-    window = sg.Window(title="WT-APA", layout=layout)
+    window = sg.Window(title="苹果派助手", layout=layout)
     app = threading.Thread(target=startScript, daemon=True)
     while True:
         event, values = window.read()
         # End program if user closes window or
         # presses the OK button
-        if event == "Stop and Exit" or event == sg.WIN_CLOSED:
+        if event == "停止并退出" or event == sg.WIN_CLOSED:
             f.close()
             sys.exit()
-        if event == "Run Script" and not isRunning:
+        if event == "运行" and not isRunning:
             isRunning = True
-            log("Started script")
+            log("开始运行")
             app.start()
