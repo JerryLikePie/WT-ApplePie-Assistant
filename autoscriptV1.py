@@ -97,10 +97,6 @@ def escapeBuying(window):
         time.sleep(1)
         getScreen(window, PATH)
         time.sleep(1)
-        click(getButtonLocation("exitout"))
-        time.sleep(1)
-        getScreen(window, PATH)
-        time.sleep(1)
         pressWithDelay('esc', 0.1, 0.5)
         pressWithDelay('esc', 0.1, 0.5)
         pressWithDelay('esc', 0.1, 0.5)
@@ -186,7 +182,7 @@ def WTScript(window):
                 click(getButtonLocation("enterbattle"))
                 time.sleep(5)
                 getScreen(window, PATH)
-                if hasImage("downloadprompt", 0.95, None):
+                if hasImage("downloadprompt", 0.97, None):
                     # If the texture download happens to be there, close it
                     click(getButtonLocation("downloadprompt"))
                 while window.title.__contains__("等"):
@@ -231,7 +227,7 @@ def WTScript(window):
             windowName = window.title
             attackPattern()
             getScreen(window, PATH)
-            time.sleep(1)
+            time.sleep(0.5)
             if i > 650:
                 # Game is stuck, try to escape
                 log("检测到卡死")
@@ -245,6 +241,19 @@ def WTScript(window):
                 time.sleep(15)
                 pressWithDelay('esc', 0.1, 0.5)
                 break
+            if hasImage("respawn", 0.95, None):
+                # Died but has enough for a plane
+                getScreen(window, PATH)
+                click(getButtonLocation("respawn"))
+                time.sleep(7)
+                pressWithDelay("j", 6, 8)
+            if hasImage("respawnship", 0.95, None):
+                # Died but has enough for another ship
+                getScreen(window, PATH)
+                click(getButtonLocation("respawnship"))
+                time.sleep(7)
+                maneuverPattern()
+                continue
             if hasImage("spawn", 0.95, None):
                 log("刚刚好像没进游戏，再进一次")
                 pressWithDelay('enter', 0.1, 4)
@@ -262,7 +271,7 @@ def WTScript(window):
         # game is over
         log("结束战斗，等待结算")
         # wait for the points
-        time.sleep(20)
+        time.sleep(15)
         getScreen(window, PATH)
         time.sleep(0.5)
         researchDone = False
@@ -273,9 +282,9 @@ def WTScript(window):
                 log("检测到卡死")
                 timeoutEscape()
                 break
-            time.sleep(1)
+            time.sleep(0.5)
             getScreen(window, PATH)
-            time.sleep(1)
+            time.sleep(0.5)
             if hasImage("crates", 0.85, None):
                 # unlocked crates
                 log("出了个箱子，记得查看背包")
@@ -295,10 +304,10 @@ def WTScript(window):
         if not researchDone:
             saveResults(window, 150)
             getScreen(window, PATH)
-            time.sleep(1)
+            time.sleep(0.5)
             log("结算完成，返回主界面")
             click(getButtonLocation("gotobase"))
-        time.sleep(5)
+        time.sleep(1)
         getScreen(window, PATH)
 
 
