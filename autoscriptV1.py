@@ -18,6 +18,8 @@ menu = "战争雷霆苹果派助手简约（无高级功能）版：\n" \
        "目标跟踪（海战）：=\n手动瞄准修正：；\n停车：X\n" \
        "缩放轴：增加数值：\\\n缩放轴：相对轴量控制：开\n缩放轴：灵敏度：100%，步长：50%，乘数：2"
 
+memo = "效率很差的地图：火山岛"
+
 sg.theme('Reddit')
 
 updateLog = [
@@ -243,6 +245,9 @@ def WTScript(window):
                 time.sleep(15)
                 pressWithDelay('esc', 0.1, 0.5)
                 break
+            if hasImage("spawn", 0.95, None):
+                log("刚刚好像没进游戏，再进一次")
+                pressWithDelay('enter', 0.1, 4)
             if hasImage("youdied", 0.95, None):
                 # died before the game ended
                 log("已死亡，返回主界面中，为防止网络情况卡死，等待15秒")
