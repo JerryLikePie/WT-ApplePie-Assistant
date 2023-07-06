@@ -84,7 +84,7 @@ def escapeBuying(window):
     click(getButtonLocation("researchdone"))
     time.sleep(3)
     getScreen(window, PATH)
-    if hasImage("newshipreseached", 0.85, None):
+    if hasImage("newshipresearched", 0.85, None):
         getScreen(window, PATH)
         time.sleep(1)
         click(getButtonLocation("shop"))
@@ -192,7 +192,7 @@ def WTScript(window):
                 log("已进入海战！")
         elif hasImage("researchdone", 0.85, None):
             timeoutEscape()
-        elif hasImage("newshipresearched", 0.9, None):
+        elif hasImage("newshipresearched", 0.92, None):
             escapeBuying(window)
         elif hasImage("cancelsmall", 0.9, None):
             click(getButtonLocation("cancelsmall"))
@@ -277,7 +277,7 @@ def WTScript(window):
                 getScreen(window, PATH)
                 time.sleep(15)
                 pressWithDelay('esc', 0.1, 0.5)
-            if hasImage("researchdone", 0.91, None):
+            if hasImage("researchdone", 0.92, None):
                 # new ship got researched. To avoid spending all SL, we glitch the research out
                 researchDone = True
                 log("解锁了配件或新船，将卡掉研发")
