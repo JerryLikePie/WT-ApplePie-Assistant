@@ -230,13 +230,13 @@ def WTScript(window):
             attackPattern()
             getScreen(window, PATH)
             time.sleep(1)
-            if i > 750:
+            if i > 650:
                 # Game is stuck, try to escape
                 log("检测到卡死")
                 timeoutEscape()
                 getScreen(window, PATH)
-                time.sleep(1)
-            if hasImage("creates", 0.85, None):
+                time.sleep(0.5)
+            if hasImage("crates", 0.85, None):
                 # unlocked crates
                 log("出了个箱子，记得查看背包")
                 getScreen(window, PATH)
@@ -271,6 +271,12 @@ def WTScript(window):
             time.sleep(1)
             getScreen(window, PATH)
             time.sleep(1)
+            if hasImage("crates", 0.85, None):
+                # unlocked crates
+                log("出了个箱子，记得查看背包")
+                getScreen(window, PATH)
+                time.sleep(15)
+                pressWithDelay('esc', 0.1, 0.5)
             if hasImage("researchdone", 0.91, None):
                 # new ship got researched. To avoid spending all SL, we glitch the research out
                 researchDone = True
