@@ -21,11 +21,11 @@ menu = "战争雷霆苹果派助手简约（无高级功能）版：\n" \
 sg.theme('Reddit')
 
 updateLog = [
-    [sg.Text("免责申明：\n本软件是大学暑期图像识别基础课课上实践作业，\n没有用到高深技术，现结课后根据规定免费公开，\n请勿在技术学习范畴之外使用或售卖本软件，\n违者后果自负", key="-log-")]]
+    [sg.Text("免责申明：\n本软件是大学暑期图像识别基础课\n课上实践作业，\n没有用到高深技术，\n现结课后根据规定免费公开，\n请勿在技术学习范畴之外使用\n或售卖本软件，\n违者后果自负", key="-log-")]]
 
 layout = [[sg.Text(menu)],
           [sg.Button("运行"), sg.VSeperator(), sg.Button("停止并退出")],
-          [sg.Column(layout=updateLog, size=(300, 100))]]
+          [sg.Column(layout=updateLog, size=(310, 150))]]
 
 
 def click(location):
