@@ -1,3 +1,4 @@
+import random
 import sys
 import time
 import keyboard
@@ -124,23 +125,32 @@ def maneuverPattern():
     # Have the ship go forward, turn to the left, stop, then open fire
     time.sleep(15)
     keyboard.press('a')
-    time.sleep(18)
+    time.sleep(14)
     keyboard.press('x')
     time.sleep(10)
     keyboard.release('a')
     keyboard.release('x')
+    pyautogui.mouseDown(button='right')
+    time.sleep(0.1)
+    pyautogui.mouseUp(button='right')
 
 
 def attackPattern():
     # open fire at the enemy
     pressWithDelay('=', 0.1, 0.1)
-    pressWithDelay('\\', 0.5, 0.1)
+    pressWithDelay('=', 0.1, 0.3)
     pressWithDelay('=', 0.1, 0.5)
     pyautogui.mouseDown(button='left')
     time.sleep(0.4)
     pyautogui.mouseUp(button='left')
     pressWithDelay(';', 0.1, 0.1)
-    pressWithDelay('=', 0.1, 1)
+    pressWithDelay('=', 0.1, 0.6)
+    # sway turret
+    k = random.randint(0,1)
+    if k == 0:
+        pressWithDelay(']', 0.2, 0.1)
+    else:
+        pressWithDelay('[', 0.2, 0.1)
     pressWithDelay('=', 0.1, 1)
 
 
@@ -254,7 +264,7 @@ def WTScript(window):
                 time.sleep(7)
                 maneuverPattern()
                 continue
-            if hasImage("spawn", 0.95, None):
+            if hasImage("enterspec", 0.95, None):
                 log("刚刚好像没进游戏，再进一次")
                 pressWithDelay('enter', 0.1, 4)
             if hasImage("youdied", 0.95, None):
@@ -307,6 +317,12 @@ def WTScript(window):
             time.sleep(0.5)
             log("结算完成，返回主界面")
             click(getButtonLocation("gotobase"))
+            getScreen(window, PATH)
+            time.sleep(0.5)
+            if hasImage("researchdone", 0.92, None):
+                # new ship got researched. To avoid spending all SL, we glitch the research out
+                log("解锁了配件或新船，将卡掉研发")
+                escapeBuying(window)
         time.sleep(1)
         getScreen(window, PATH)
 
