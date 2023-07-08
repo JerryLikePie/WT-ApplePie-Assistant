@@ -13,22 +13,26 @@ import PySimpleGUI as sg
 PATH = "./pic/screenshot.png"
 f = open('./battlelog/log.txt', 'a+')
 menu = "战争雷霆苹果派助手简约（无高级功能）版：\n" \
-       "▶图像设定：\n分辨率：1270x720  显示模式：窗口模式\n" \
+       "▶图像设定：\n分辨率：1270x720  显示模式：窗口模式\nUI大小：100%\n" \
        "▶主要参数->海战设置：\nAI攻击模式：任意目标  自动锁定目标：开\n" \
        "▶按键设置->海战：\n" \
        "目标跟踪（海战）：=\n手动瞄准修正：；\n停车：X\n" \
-       "缩放轴：增加数值：\\\n缩放轴：相对轴量控制：开\n缩放轴：灵敏度：100%，步长：50%，乘数：2"
+       "瞄准X轴（海战）：增加数值：]，减少数值：[\n" \
+       "确保右键可以进行视角缩放"
 
 memo = "效率很差的地图：火山岛"
 
 sg.theme('Reddit')
 
 updateLog = [
-    [sg.Text("免责申明：\n本软件是大学暑期图像识别基础课\n课上实践作业，\n没有用到高深技术，\n现结课后根据规定免费公开，\n请勿在技术学习范畴之外使用\n或售卖本软件，\n违者后果自负", key="-log-")]]
+    [sg.Text("免责申明：\n本软件是大学暑期图像识别基础课\n课上实践作业，\n没有用到高深技术，\n现结课后根据规定免费公开，\n请勿在技术学习范畴之外使用\n或售卖本软件，违者后果自负", key="-log-")]]
 
 layout = [[sg.Text(menu)],
-          [sg.Button("运行"), sg.VSeperator(), sg.Button("停止并退出")],
+          [sg.Button("驱逐"), sg.VSeperator(), sg.Button("轻巡"), sg.VSeperator(), sg.Button("重巡"), sg.VSeperator(), sg.Button("停止并退出")],
           [sg.Column(layout=updateLog, size=(310, 150))]]
+
+turntime = 0
+
 
 
 def click(location):
@@ -112,6 +116,11 @@ def getScreen(window, location):
     img = img.crop((left + 10, top, right - 10, bottom - 10))
     img.save(location)
 
+def screenshot(window):
+    time.sleep(0.5)
+    getScreen(window, PATH)
+    time.sleep(0.5)
+
 
 def pressWithDelay(c, d, t):
     # press the button c, for d seconds, and wait t seconds
@@ -125,7 +134,8 @@ def maneuverPattern():
     # Have the ship go forward, turn to the left, stop, then open fire
     time.sleep(15)
     keyboard.press('a')
-    time.sleep(14)
+    global turntime
+    time.sleep(turntime)
     keyboard.press('x')
     time.sleep(10)
     keyboard.release('a')
@@ -190,11 +200,15 @@ def WTScript(window):
         if hasImage("naval", 0.91, "未检测到海战！请调成海战模式！"):
             if hasImage("enterbattle", 0.95, None):
                 click(getButtonLocation("enterbattle"))
-                time.sleep(5)
-                getScreen(window, PATH)
+                log("开始排队")
+                screenshot(window)
                 if hasImage("downloadprompt", 0.97, None):
                     # If the texture download happens to be there, close it
                     click(getButtonLocation("downloadprompt"))
+                    screenshot(window)
+                    if hasImage("exitout", 0.92, None):
+                        click(getButtonLocation(("exitout")))
+                        screenshot(window)
                 while window.title.__contains__("等"):
                     time.sleep(1)
                 log("已进入海战！")
@@ -218,8 +232,7 @@ def WTScript(window):
         # We are currently in a game
         # First sleep for a while
         time.sleep(25)
-        getScreen(window, PATH)
-        time.sleep(1)
+        screenshot(window)
         # Then, let it auto spawn to avoid being locked on
         while hasImage("spawn", 0.9, "等待中……"):
             getScreen(window, PATH)
@@ -371,7 +384,19 @@ if __name__ == '__main__':
         if event == "停止并退出" or event == sg.WIN_CLOSED:
             f.close()
             sys.exit()
-        if event == "运行" and not isRunning:
+        if event == "驱逐" and not isRunning:
             isRunning = True
+            turntime = 14
             log("开始运行")
             app.start()
+        if event == "轻巡" and not isRunning:
+            isRunning = True
+            turntime = 22
+            log("开始运行")
+            app.start()
+        if event == "重巡" and not isRunning:
+            isRunning = True
+            turntime = 26
+            log("开始运行")
+            app.start()
+
