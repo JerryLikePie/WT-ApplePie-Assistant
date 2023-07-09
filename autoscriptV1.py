@@ -17,8 +17,9 @@ menu = "战争雷霆苹果派助手简约（无高级功能）版：\n" \
        "▶主要参数->海战设置：\nAI攻击模式：任意目标  自动锁定目标：开\n" \
        "▶按键设置->海战：\n" \
        "目标跟踪（海战）：=\n手动瞄准修正：；\n停车：X\n" \
-       "瞄准X轴（海战）：增加数值：]，减少数值：[\n" \
-       "确保右键可以进行视角缩放"
+       "海战瞄准控制X轴：增加数值：]，减少数值：[\n" \
+       "确保右键可以进行视角缩放\n" \
+       "除了用来挂的船，不要带任何其他载具，\n包括另一条船或飞机。\n"
 
 memo = "效率很差的地图：火山岛"
 
@@ -32,6 +33,7 @@ layout = [[sg.Text(menu)],
           [sg.Column(layout=updateLog, size=(310, 150))]]
 
 turntime = 0
+gotime = 0
 
 
 
@@ -42,6 +44,10 @@ def click(location):
     pyautogui.mouseDown(button='left')
     time.sleep(0.2)
     pyautogui.mouseUp(button='left')
+
+def spamESC(times):
+    for i in range(times):
+        pressWithDelay('esc', 0.1, 0.5)
 
 
 def log(message):
@@ -86,25 +92,27 @@ def getButtonLocation(name):
 
 def escapeBuying(window):
     # if a ship is researched, escape buying via the item shop
-    time.sleep(1)
-    getScreen(window, PATH)
+    screenshot(window)
     click(getButtonLocation("researchdone"))
     time.sleep(3)
     getScreen(window, PATH)
-    if hasImage("newshipresearched", 0.85, None):
-        getScreen(window, PATH)
-        time.sleep(1)
+    if hasImage("newshipresearched", 0.91, None):
+        screenshot(window)
         click(getButtonLocation("shop"))
-        time.sleep(1)
-        getScreen(window, PATH)
-        time.sleep(1)
+        screenshot(window)
         click(getButtonLocation("itemshop"))
-        time.sleep(1)
-        getScreen(window, PATH)
-        time.sleep(1)
-        pressWithDelay('esc', 0.1, 0.5)
-        pressWithDelay('esc', 0.1, 0.5)
-        pressWithDelay('esc', 0.1, 0.5)
+        screenshot(window)
+        spamESC(3)
+    partsDone(window)
+
+
+def partsDone(window):
+    time.sleep(1)
+    screenshot(window)
+    if hasImage("autoresearch", 0.9, None):
+        click("autoresearch")
+        time.sleep(10)
+        spamESC(6)
 
 
 def getScreen(window, location):
@@ -132,7 +140,8 @@ def pressWithDelay(c, d, t):
 
 def maneuverPattern():
     # Have the ship go forward, turn to the left, stop, then open fire
-    time.sleep(15)
+    global gotime
+    time.sleep(gotime)
     keyboard.press('a')
     global turntime
     time.sleep(turntime)
@@ -152,8 +161,8 @@ def attackPattern():
     pressWithDelay('=', 0.1, 0.5)
     pyautogui.mouseDown(button='left')
     time.sleep(0.4)
-    pyautogui.mouseUp(button='left')
     pressWithDelay(';', 0.1, 0.1)
+    pyautogui.mouseUp(button='left')
     pressWithDelay('=', 0.1, 0.6)
     # sway turret
     k = random.randint(0,1)
@@ -161,7 +170,7 @@ def attackPattern():
         pressWithDelay(']', 0.2, 0.1)
     else:
         pressWithDelay('[', 0.2, 0.1)
-    pressWithDelay('=', 0.1, 1)
+    pressWithDelay('=', 0.1, 1.3)
 
 
 def saveResults(window, times):
@@ -180,15 +189,7 @@ def saveResults(window, times):
 
 def timeoutEscape():
     # a dumb way to escape timeouts: spam esc many times.
-    pressWithDelay('esc', 0.1, 0.5)
-    pressWithDelay('esc', 0.1, 0.5)
-    pressWithDelay('esc', 0.1, 0.5)
-    pressWithDelay('esc', 0.1, 0.5)
-    pressWithDelay('esc', 0.1, 0.5)
-    pressWithDelay('esc', 0.1, 0.5)
-    pressWithDelay('esc', 0.1, 0.5)
-    pressWithDelay('esc', 0.1, 0.5)
-    pressWithDelay('esc', 0.1, 0.5)
+    spamESC(10)
 
 
 def WTScript(window):
@@ -218,6 +219,8 @@ def WTScript(window):
             escapeBuying(window)
         elif hasImage("cancelsmall", 0.9, None):
             click(getButtonLocation("cancelsmall"))
+        elif hasImage("autoresearch", 0.9, None):
+            partsDone(window)
         elif hasImage("exitout", 0.9, None):
             click(getButtonLocation("exitout"))
         else:
@@ -310,15 +313,14 @@ def WTScript(window):
             time.sleep(0.5)
             if hasImage("crates", 0.85, None):
                 # unlocked crates
-                log("出了个箱子，记得查看背包")
+                log("===出了个箱子，记得查看背包===")
                 getScreen(window, PATH)
                 time.sleep(15)
                 pressWithDelay('esc', 0.1, 0.5)
             if hasImage("researchdone", 0.92, None):
                 # new ship got researched. To avoid spending all SL, we glitch the research out
                 researchDone = True
-                log("解锁了配件或新船，将卡掉研发")
-                log("如果需要购买或研发特定船只请暂停脚本")
+                log("===解锁了配件或新船===")
                 saveResults(window, 150)
                 escapeBuying(window)
                 break
@@ -334,7 +336,7 @@ def WTScript(window):
             time.sleep(0.5)
             if hasImage("researchdone", 0.92, None):
                 # new ship got researched. To avoid spending all SL, we glitch the research out
-                log("解锁了配件或新船，将卡掉研发")
+                log("===解锁了配件或新船===")
                 escapeBuying(window)
         time.sleep(1)
         getScreen(window, PATH)
@@ -361,7 +363,7 @@ def detectWindow():
                 time.sleep(0.5)
             else:
                 "Currently not in War Thunder"
-                log("未检测到战争雷霆！")
+                print("未检测到战争雷霆！")
                 time.sleep(3)
 
         except KeyboardInterrupt:
@@ -386,17 +388,20 @@ if __name__ == '__main__':
             sys.exit()
         if event == "驱逐" and not isRunning:
             isRunning = True
+            gotime = 14
             turntime = 14
             log("开始运行")
             app.start()
         if event == "轻巡" and not isRunning:
             isRunning = True
-            turntime = 22
+            gotime = 40
+            turntime = 25
             log("开始运行")
             app.start()
         if event == "重巡" and not isRunning:
             isRunning = True
-            turntime = 26
+            gotime = 50
+            turntime = 32
             log("开始运行")
             app.start()
 
