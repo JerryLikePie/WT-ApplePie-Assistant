@@ -112,7 +112,7 @@ def partsDone(window):
     if hasImage("autoresearch", 0.92, None):
         click(getButtonLocation("autoresearch"))
         time.sleep(10)
-        spamESC(6)
+        spamESC(15)
 
 
 def getScreen(window, location):
